@@ -144,4 +144,15 @@ fun rememberShellState(ps1: String) = remember {
     ShellState(ps1, listOf(), "", 0)
 }
 
+fun ShellState.submitCommand(commandState: CommandState) {
+    pastCommands += commandState
+}
+
+fun ShellState.appendLastCommandText(newText: String) {
+    pastCommands = pastCommands.mapIndexed { index, oldState ->
+        if(index != pastCommands.lastIndex) oldState
+        else oldState.copy(output = oldState.output + newText + "\n")
+    }
+}
+
 val Char.isPrintable get() = code in 32..126
