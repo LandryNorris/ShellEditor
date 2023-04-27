@@ -27,7 +27,7 @@ fun App() {
                 buildAnnotatedString { append(state.ps1) },
                 command, ""))
 
-            val processBuilder = ProcessBuilder(command.split(" "))
+            val processBuilder = ProcessBuilder("/bin/sh", "-c", command)
             processBuilder.redirectErrorStream(true)
             val process = processBuilder.start()
 
