@@ -17,7 +17,6 @@ import androidx.compose.ui.awt.awtEventOrNull
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -25,7 +24,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Unit) {
-    val focusRequester = FocusRequester()
+    val focusRequester = remember { FocusRequester() }
     Column(modifier = Modifier
         .fillMaxSize().focusable().focusRequester(focusRequester).clickable (
             interactionSource = remember { MutableInteractionSource() },
@@ -34,7 +33,6 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
             focusRequester.requestFocus()
         }
         .background(colors.background).onKeyEvent {
-            println("Got key event $it")
             val char = it.awtEventOrNull?.keyChar
             if(it.key == Key.DirectionLeft && it.type == KeyEventType.KeyDown) {
                 if(state.cursorIndex > 0) state.cursorIndex--
@@ -47,6 +45,8 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
                         deleteCharAt(--state.cursorIndex)
                     }
                 }
+            } else if(it.key == Key.Enter && it.type == KeyEventType.KeyDown) {
+                onEnterPressed()
             } else if(char != null && char.isPrintable && it.type == KeyEventType.KeyDown) {
                 println("Pressed $char")
 

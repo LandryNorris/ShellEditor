@@ -21,8 +21,14 @@ fun App() {
 
     val state = rememberShellState("(landry) ~ ")
     MaterialTheme {
-        ShellEditor(state, darkThemeShellColors, {})
+        ShellEditor(state, darkThemeShellColors) {
+            commandSubmitted(state.currentCommand)
+        }
     }
+}
+
+fun commandSubmitted(command: String) {
+    println("Command is $command")
 }
 
 fun main() = application {
