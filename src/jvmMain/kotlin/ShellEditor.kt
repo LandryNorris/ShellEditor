@@ -60,7 +60,7 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
         }) {
         LazyColumn {
             items(state.pastCommands) {
-                CommandView(it)
+                CommandView(it, colors)
             }
             item {
                 Prompt(state.ps1, state.currentCommand, true,
@@ -71,10 +71,10 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
 }
 
 @Composable
-fun CommandView(state: CommandState) {
+fun CommandView(state: CommandState, colors: ShellColors) {
     Column {
-        Prompt(state.prompt, state.command)
-        Text(state.output, modifier = Modifier.fillMaxWidth())
+        Prompt(state.prompt, state.command, colors = colors)
+        Text(state.output, modifier = Modifier.fillMaxWidth(), color = colors.output)
     }
 }
 
@@ -123,11 +123,11 @@ fun Prompt(prompt: AnnotatedString, command: String,
     }
 }
 
-val darkThemeShellColors = ShellColors(Color.White, Color.White, Color.White, Color.Black, Color.DarkGray)
+val darkThemeShellColors = ShellColors(Color.White, Color.White, Color.White, Color.Black, Color.DarkGray, Color.White)
 
 data class ShellColors(val prompt: Color, val command: Color,
                        val cursor: Color, val behindCursor: Color,
-                       val background: Color)
+                       val background: Color, val output: Color)
 
 data class CommandState(val prompt: AnnotatedString, val command: String, val output: String)
 
