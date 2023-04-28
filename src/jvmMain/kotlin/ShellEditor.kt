@@ -17,6 +17,7 @@ import androidx.compose.ui.awt.awtEventOrNull
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -31,7 +32,7 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
             indication = null // To disable the ripple effect
         ) {
             focusRequester.requestFocus()
-        }
+        }.onGloballyPositioned { focusRequester.requestFocus() }
         .background(colors.background).onKeyEvent {
             val char = it.awtEventOrNull?.keyChar
             if(it.key == Key.DirectionLeft && it.type == KeyEventType.KeyDown) {
