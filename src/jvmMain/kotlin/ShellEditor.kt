@@ -156,4 +156,9 @@ fun ShellState.appendLastCommandText(newText: String) {
     }
 }
 
+fun ShellState.clearCommand() {
+    currentCommand = ""
+    cursorIndex = 0
+}
+
 val Char.isPrintable get() = code in 32..126
