@@ -15,7 +15,7 @@ import java.io.BufferedReader
 @Composable
 @Preview
 fun App() {
-    val state = rememberShellState("""\033[31;42m\u@\h:\W\${'$'}\033[0m""")
+    val state = rememberShellState("""\033[31;42m\u@\h:\w\${'$'}\033[0m""")
     MaterialTheme(typography = Typography(defaultFontFamily = FontFamily.Monospace)) {
         ShellEditor(state, darkThemeShellColors) {
             val command = state.currentCommand
