@@ -83,7 +83,7 @@ fun CommandView(state: CommandState, colors: ShellColors) {
 fun Prompt(prompt: String, command: String,
            blinkCursor: Boolean = false, blinkDuration: Int = 1000,
            cursorIndex: Int = -1, colors: ShellColors = darkThemeShellColors) {
-    Prompt(buildAnnotatedString { append(prompt) }, command, blinkCursor, blinkDuration,
+    Prompt(processPS(prompt), command, blinkCursor, blinkDuration,
         cursorIndex, colors)
 }
 
@@ -104,7 +104,7 @@ fun Prompt(prompt: AnnotatedString, command: String,
     val showCursor = showCursorFloat < 0.5f
 
     Row {
-        Text(prompt, color = colors.prompt)
+        Text(prompt, color = colors.prompt, maxLines = 1)
 
         val annotatedString = buildAnnotatedString {
             append(command)
@@ -120,7 +120,7 @@ fun Prompt(prompt: AnnotatedString, command: String,
                     end = cursorIndex+1)
             addStyle(SpanStyle(color = Color.Transparent), start = length-1, end = length)
         }
-        Text(annotatedString, color = colors.command)
+        Text(annotatedString, color = colors.command, modifier = Modifier.weight(1f))
     }
 }
 

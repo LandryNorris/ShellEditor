@@ -15,16 +15,14 @@ import java.io.BufferedReader
 @Composable
 @Preview
 fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
-
-    val state = rememberShellState("(landry) ~ ")
+    val state = rememberShellState("\\e[4;31m[\\u@\\h \\W \\@]\\\$\\e[0m")
     MaterialTheme(typography = Typography(defaultFontFamily = FontFamily.Monospace)) {
         ShellEditor(state, darkThemeShellColors) {
             val command = state.currentCommand
 
             println("Command is $command")
             state.submitCommand(CommandState(
-                buildAnnotatedString { append(state.ps1) },
+                processPS(state.ps1),
                 command, ""))
 
             val processBuilder = ProcessBuilder("/bin/sh", "-c", command)
