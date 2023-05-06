@@ -7,8 +7,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import java.util.regex.Pattern
 
+const val ESCAPE_CHAR = "\u001B"
+
 fun parseColor(text: String): AnnotatedString = buildAnnotatedString {
-    val interleaved = splitColorMetadata(text)
+    val interleaved = splitColorMetadata(text.replace("\\e", ESCAPE_CHAR)
+        .replace("\\033", ESCAPE_CHAR))
 
     var foregroundColor = Color.Unspecified
     var backgroundColor = Color.Unspecified
@@ -17,9 +20,9 @@ fun parseColor(text: String): AnnotatedString = buildAnnotatedString {
     var decoration = TextDecoration.None
 
     for(part in interleaved) {
-        if(part.startsWith("\\e")) {
+        if(part.startsWith(ESCAPE_CHAR)) {
             if(isColor(part)) {
-                val modifiers = part.removeSuffix("m").removePrefix("\\e[").split(";")
+                val modifiers = part.removeSuffix("m").removePrefix("${ESCAPE_CHAR}[").split(";")
                 val foregroundColorString = modifiers.firstOrNull { it.startsWith("3") && it.length == 2 && it[1].isDigit() }
                 val backgroundColorString = modifiers.firstOrNull { it.startsWith("4") && it.length == 2 && it[1].isDigit() }
                 if(foregroundColorString != null) foregroundColor = getColor(foregroundColorString[1])
@@ -52,7 +55,7 @@ fun parseColor(text: String): AnnotatedString = buildAnnotatedString {
 }
 
 fun splitColorMetadata(text: String): List<String> {
-    val pattern = Pattern.compile("\\\\e\\[([0-9]+;?)+m")
+    val pattern = Pattern.compile("$ESCAPE_CHAR\\[([0-9]+;?)+m")
     val m = pattern.matcher(text)
 
     val colors = mutableListOf<String>()
@@ -60,7 +63,7 @@ fun splitColorMetadata(text: String): List<String> {
         colors.add(m.group())
     }
 
-    val splitColors = text.split(Regex("\\\\e\\[([0-9]+;?)+m"))
+    val splitColors = text.split(Regex("$ESCAPE_CHAR\\[([0-9]+;?)+m"))
 
     val interleaved = mutableListOf<String>()
     val colorIterator = colors.iterator()
@@ -74,7 +77,7 @@ fun splitColorMetadata(text: String): List<String> {
 }
 
 private fun isColor(escaped: String): Boolean =
-    escaped.startsWith("\\e[") && escaped.last() == 'm'
+    escaped.startsWith("$ESCAPE_CHAR[") && escaped.last() == 'm'
 
 private fun getColor(code: Char) = when(code) {
     '0' -> Color.Black
