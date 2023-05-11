@@ -29,7 +29,7 @@ fun PromptPreviewWithoutCursor() {
 @Composable
 fun BlinkingCursorPrompt() {
     Box(modifier = Modifier.background(Color.DarkGray)) {
-        Prompt("(landry) ~ ",
+        Prompt("\\! (landry) ~ ",
             "some command I'm typing",
             cursorIndex = 7, blinkCursor = true)
     }
