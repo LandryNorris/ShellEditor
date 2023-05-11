@@ -19,6 +19,7 @@ fun App() {
     MaterialTheme(typography = Typography(defaultFontFamily = FontFamily.Monospace)) {
         ShellEditor(state, darkThemeShellColors) {
             val command = state.currentCommand
+            state.clearCommand()
 
             println("Command is $command")
             state.submitCommand(command)
