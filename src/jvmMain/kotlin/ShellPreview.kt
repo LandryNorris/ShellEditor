@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 fun PromptPreview() {
     Box(modifier = Modifier.background(Color.DarkGray)) {
         Prompt("(landry) ~ ",
-            "some command I'm typing", 0,
+            "some command I'm typing",
             cursorIndex = 7)
     }
 }
@@ -20,7 +20,7 @@ fun PromptPreview() {
 fun PromptPreviewWithoutCursor() {
     Box(modifier = Modifier.background(Color.DarkGray)) {
         Prompt("(landry) ~ ",
-            "some command I'm typing", 12,
+            "some command I'm typing",
             cursorIndex = -1)
     }
 }
@@ -30,7 +30,7 @@ fun PromptPreviewWithoutCursor() {
 fun BlinkingCursorPrompt() {
     Box(modifier = Modifier.background(Color.DarkGray)) {
         Prompt("\\! (landry) ~ ",
-            "some command I'm typing", 12,
+            "some command I'm typing",
             cursorIndex = 7, blinkCursor = true)
     }
 }
