@@ -15,15 +15,13 @@ import java.io.BufferedReader
 @Composable
 @Preview
 fun App() {
-    val state = rememberShellState("""\033[31;42m\u@\h:\w\${'$'}\033[0m""")
+    val state = rememberShellState("""\e[31m\! \033[31;42m\u@\h:\w\${'$'}\033[0m""")
     MaterialTheme(typography = Typography(defaultFontFamily = FontFamily.Monospace)) {
         ShellEditor(state, darkThemeShellColors) {
             val command = state.currentCommand
 
             println("Command is $command")
-            state.submitCommand(CommandState(
-                processPS(state.ps1),
-                command, ""))
+            state.submitCommand(command)
 
             val processBuilder = ProcessBuilder("/bin/sh", "-c", command)
             processBuilder.redirectErrorStream(true)

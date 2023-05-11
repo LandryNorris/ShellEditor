@@ -64,7 +64,9 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
                 CommandView(it, colors)
             }
             item {
-                Prompt(state.ps1, state.currentCommand, true,
+                Prompt(state.ps1, state.currentCommand,
+                    state.pastCommands.size,
+                    true,
                     1000, state.cursorIndex)
             }
         }
@@ -80,10 +82,13 @@ fun CommandView(state: CommandState, colors: ShellColors) {
 }
 
 @Composable
-fun Prompt(prompt: String, command: String,
+fun Prompt(prompt: String, command: String, historyCount: Int,
            blinkCursor: Boolean = false, blinkDuration: Int = 1000,
            cursorIndex: Int = -1, colors: ShellColors = darkThemeShellColors) {
-    Prompt(processPS(prompt), command, blinkCursor, blinkDuration,
+    val annotatedPs1 = remember(prompt) {
+        processPS(prompt, historyCount)
+    }
+    Prompt(annotatedPs1, command, blinkCursor, blinkDuration,
         cursorIndex, colors)
 }
 
@@ -145,7 +150,8 @@ fun rememberShellState(ps1: String) = remember {
     ShellState(ps1, listOf(), "", 0)
 }
 
-fun ShellState.submitCommand(commandState: CommandState) {
+fun ShellState.submitCommand(command: String) {
+    val commandState = CommandState(processPS(ps1, pastCommands.size), command, "")
     pastCommands += commandState
 }
 
