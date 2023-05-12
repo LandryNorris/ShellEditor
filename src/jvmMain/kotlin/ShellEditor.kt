@@ -75,8 +75,11 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
 @Composable
 fun CommandView(state: CommandState, colors: ShellColors) {
     Column {
+        val annotatedOutput = remember(state.output) {
+            parseColor(state.output)
+        }
         Prompt(state.prompt, state.command, colors = colors)
-        Text(state.output, modifier = Modifier.fillMaxWidth(), color = colors.output)
+        Text(annotatedOutput, modifier = Modifier.fillMaxWidth(), color = colors.output)
     }
 }
 

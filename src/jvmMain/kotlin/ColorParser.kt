@@ -36,12 +36,30 @@ fun parseColor(text: String): AnnotatedString = buildAnnotatedString {
                 if(modifiers.any { it == "23" }) style = FontStyle.Normal
                 if(modifiers.any { it == "24" }) decoration = TextDecoration.None
 
-                if(modifiers.any { it == "0" }) {
+                if(modifiers.any { it == "0" } || modifiers.firstOrNull()?.isBlank() == true) {
                     weight = FontWeight.Normal
                     style = FontStyle.Normal
                     decoration = TextDecoration.None
                     foregroundColor = Color.Unspecified
                     backgroundColor = Color.Unspecified
+                }
+
+                if(modifiers.size == 3 && modifiers[0] == "38" && modifiers[1] == "5") {
+                    //foreground 256 color
+                    val color = modifiers[2].toIntOrNull()
+
+                    if(color != null) {
+                        foregroundColor = getColor(color)
+                    }
+                }
+
+                if(modifiers.size == 3 && modifiers[0] == "48" && modifiers[1] == "5") {
+                    //foreground 256 color
+                    val color = modifiers[2].toIntOrNull()
+
+                    if(color != null) {
+                        backgroundColor = getColor(color)
+                    }
                 }
             }
         } else {
@@ -54,8 +72,44 @@ fun parseColor(text: String): AnnotatedString = buildAnnotatedString {
     }
 }
 
+private fun getColor(color: Int): Color {
+    if (color < 16) {
+        return listOf(
+            Color(0, 0, 0),
+            Color(128, 0, 0),
+            Color(0, 128, 0),
+            Color(128, 128, 0),
+            Color(0, 0, 128),
+            Color(128, 0, 128),
+            Color(0, 128, 128),
+            Color(192, 192, 192),
+            Color(128, 128, 128),
+            Color(255, 0, 0),
+            Color(0, 255, 0),
+            Color(255, 255, 0),
+            Color(0, 0, 255),
+            Color(255, 0, 255),
+            Color(0, 255, 255),
+            Color(255, 255, 255)
+        )[color]
+    } else if (color in 16..231) {
+        val index = color - 16
+        val colors = listOf(0, 95, 135, 175, 215, 255)
+
+        val b = colors[index % colors.size]
+        val g = colors[(index / colors.size) % colors.size]
+        val r = colors[(index / (colors.size * colors.size)) % colors.size]
+
+        return Color(r, g, b)
+    } else {
+        val index = color - 232
+        val c = 8 + index * 10
+        return Color(c, c, c)
+    }
+}
+
 fun splitColorMetadata(text: String): List<String> {
-    val pattern = Pattern.compile("$ESCAPE_CHAR\\[([0-9]+;?)+m")
+    val pattern = Pattern.compile("$ESCAPE_CHAR\\[([0-9]*;?)+m")
     val m = pattern.matcher(text)
 
     val colors = mutableListOf<String>()
@@ -63,7 +117,7 @@ fun splitColorMetadata(text: String): List<String> {
         colors.add(m.group())
     }
 
-    val splitColors = text.split(Regex("$ESCAPE_CHAR\\[([0-9]+;?)+m"))
+    val splitColors = text.split(Regex("$ESCAPE_CHAR\\[([0-9]*;?)+m"))
 
     val interleaved = mutableListOf<String>()
     val colorIterator = colors.iterator()

@@ -10,6 +10,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import com.pty4j.PtyProcessBuilder
 import java.io.BufferedReader
 
 @Composable
@@ -24,8 +25,9 @@ fun App() {
             println("Command is $command")
             state.submitCommand(command)
 
-            val processBuilder = ProcessBuilder("/bin/sh", "-c", command)
-            processBuilder.redirectErrorStream(true)
+            val processBuilder = PtyProcessBuilder().setCommand(arrayOf("bash", "-c", command))
+            processBuilder.setRedirectErrorStream(true)
+            processBuilder.setEnvironment(System.getenv() + ("TERM" to "xterm-256color"))
             val process = processBuilder.start()
 
             val reader = BufferedReader(process.inputReader())
