@@ -59,14 +59,14 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
             }
             false
         }) {
-        LazyColumn {
-            items(state.pastCommands) {
-                CommandView(it, colors)
-            }
+        LazyColumn(reverseLayout = true) {
             item {
                 Prompt(state.ps1, state.currentCommand,
                     true,
                     1000, state.cursorIndex)
+            }
+            items(state.pastCommands.reversed()) {
+                CommandView(it, colors)
             }
         }
     }
