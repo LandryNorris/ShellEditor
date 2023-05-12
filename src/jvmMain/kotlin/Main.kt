@@ -10,6 +10,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 
 @Composable
@@ -26,13 +29,17 @@ fun App() {
 
             val processBuilder = ProcessBuilder("/bin/sh", "-c", command)
             processBuilder.redirectErrorStream(true)
-            val process = processBuilder.start()
 
-            val reader = BufferedReader(process.inputReader())
+            CoroutineScope(Dispatchers.Default).launch {
+                val process = processBuilder.start()
 
-            reader.forEachLine {
-                println(it)
-                state.appendLastCommandText(it)
+                val reader = BufferedReader(process.inputReader())
+
+                reader.forEachLine {
+                    println(it)
+                    state.appendLastCommandText(it)
+                }
+                state.isRunningCommand = false
             }
         }
     }

@@ -60,10 +60,12 @@ fun ShellEditor(state: ShellState, colors: ShellColors, onEnterPressed: () -> Un
             false
         }) {
         LazyColumn(reverseLayout = true) {
-            item {
-                Prompt(state.ps1, state.currentCommand,
-                    true,
-                    1000, state.cursorIndex)
+            if(!state.isRunningCommand) {
+                item {
+                    Prompt(state.ps1, state.currentCommand,
+                        true,
+                        1000, state.cursorIndex)
+                }
             }
             items(state.pastCommands.reversed()) {
                 CommandView(it, colors)
@@ -137,21 +139,24 @@ data class ShellColors(val prompt: Color, val command: Color,
 data class CommandState(val prompt: AnnotatedString, val command: String, val output: String)
 
 class ShellState(ps1: String, pastCommands: List<CommandState>,
-                 currentCommand: String, cursorIndex: Int) {
+                 currentCommand: String, cursorIndex: Int, isRunningCommand: Boolean) {
     var ps1 by mutableStateOf(ps1)
     var pastCommands by mutableStateOf(pastCommands)
     var currentCommand by mutableStateOf(currentCommand)
     var cursorIndex by mutableStateOf(cursorIndex)
+    var isRunningCommand by mutableStateOf(isRunningCommand)
 }
 
 @Composable
 fun rememberShellState(ps1: String) = remember {
-    ShellState(ps1, listOf(), "", 0)
+    ShellState(ps1, listOf(), "", 0, false)
 }
 
 fun ShellState.submitCommand(command: String) {
     val commandState = CommandState(processPS(ps1), command, "")
     pastCommands += commandState
+
+    isRunningCommand = true
 }
 
 fun ShellState.appendLastCommandText(newText: String) {
