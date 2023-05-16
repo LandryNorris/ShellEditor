@@ -1,4 +1,4 @@
-Shell Editor
+KTerm
 ============
 
 Shell frontend for Jetpack Compose. This
