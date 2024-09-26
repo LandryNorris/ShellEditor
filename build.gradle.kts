@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.net.URI
 
 plugins {
     kotlin("multiplatform")
@@ -12,6 +13,7 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 }
 
 kotlin {
@@ -23,6 +25,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation("org.jetbrains.pty4j:pty4j:0.12.11")
             }
         }
         val jvmTest by getting
